@@ -1,3 +1,5 @@
+// ---------------------------------- SETTINGS ----------------------------------
+
 // define global helper variables for borders of game canvas
 
 var upperBorder = 60;
@@ -5,11 +7,18 @@ var lowerBorder = 400;
 var rightBorder = 400;
 var leftBorder = 0;
 
-/*
-var randomNumber = function(a, b) {
-    Math.floor(((Math.random() * b) + a));
-};
-*/
+// global variables for setting difficulty level - you can adjust:
+
+// - number_of_enemies in each line, e.g. number 2 will create 6 enemies (2 enemies in each of 3 lines)
+var number_of_enemies = 2;
+
+// - speed of the enemies,
+var minSpeed = 50;
+var maxSpeed = 300;
+
+// - its starting x coordinate
+var enemyStart = -100;
+
 
 // ---------------------------------- ENEMIES ----------------------------------
 
@@ -20,7 +29,7 @@ var Enemy = function(x, y, minSpeed, maxSpeed) {
     // we've provided one for you to get started
 
     //Setting the Enemy initial location - it sets random x location out of screen
-    this.x = x;
+    this.x = enemyStart;
     this.y = y;
 
     //Setting the Enemy speed (you need to implement)
@@ -43,13 +52,10 @@ Enemy.prototype.update = function(dt) {
     //Updates the Enemy location (you need to implement)
     this.x = this.x + this.speed * dt;
 
-    //Going out of screen (right side) - reset the position of enemy
-
-
+    //Going out of screen (right side) - reset the position of enemy to -100 px and sets new speed of enemy between 50 and 300
     if (this.x>=rightBorder+200) {
-        this.x = -300;
-       //this.x = allEnemies[0].this.x;
-       //this.speed = Math.floor((Math.random() * this.maxSpeed) + this.minSpeed);
+        this.x = -100;
+        this.speed =  Math.floor((Math.random() * maxSpeed) + minSpeed);
     };
 
 
@@ -66,12 +72,11 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-//Reset all enemies to the initial position
-Enemy.prototype.reset = function() {
-    for (var i=0; i<allEnemies.lenght; i++) {
-        allEnemies[i].x = -300;
-    }
+//Reset all enemies to the initial position - NIEPOTRZEBNA ????
 
+Enemy.prototype.reset = function() {
+        allEnemies = [];
+        newEnemyLine(2);
 };
 
 
@@ -85,8 +90,7 @@ var Player = function() {
 
     //Setting the Player initial location
 
-    this.x = 200;
-    this.y = 400;
+    this.reset();
 
     //Loading image of player
     this.sprite = 'images/char-boy.png';
@@ -102,7 +106,11 @@ Player.prototype.update = function(dt) {
     this.x * dt;
     this.y * dt;
 
-    //Collisions ????????
+    //Collisions - when collide function returns true then plater is reseted
+
+    if (this.collide() === true) {
+        this.reset();
+    }
 
 };
 
@@ -124,8 +132,8 @@ Player.prototype.reset = function() {
 Player.prototype.handleInput = function(pressed_key) {
         if (pressed_key == 'up' && this.y>upperBorder) {
             this.y = this.y - 85;
-    }   else if (pressed_key == 'up' && this.y<=upperBorder) {
-            this.reset();
+    }   else if (pressed_key === 'up' && this.y<=upperBorder) {
+           this.reset();
         };
 
         if (pressed_key === 'down' && this.y<lowerBorder) {
@@ -142,6 +150,20 @@ Player.prototype.handleInput = function(pressed_key) {
 
 };
 
+// function defining when collision of player with enemy occurs
+Player.prototype.collide = function() {
+    //for each enemy instacnce in allEnemies array a condition is made and when is true it returns TRUE
+    for (var i=0; i < allEnemies.length; i++) {
+
+        // this condition checks whether the player object's coordinates are within enemies x coordinate (+- 50px) and y cooridinate (+- 30px)
+        if (this.x < allEnemies[i].x + 50 && this.x > allEnemies[i].x - 50 && this.y < allEnemies[i].y + 30 && this.y > allEnemies[i].y - 30) {
+            return true;
+            break;
+        };
+
+    }
+};
+
 
 // ---------------------------------- OTHER ----------------------------------
 
@@ -151,19 +173,17 @@ Player.prototype.handleInput = function(pressed_key) {
 
 var allEnemies = [];
 
-
 // function NewEnemyLine creates few (number_of_enemies) new objects of Enemy class with coordinates and randomly generated speed for all 3 lines. Then places it in allEnemies array
 var newEnemyLine = function(number_of_enemies) {
     for (var i=0; i<number_of_enemies; i++) {
-        var new_enemy_1 = new Enemy(-300, 60, 50, 300);
-        var new_enemy_2 = new Enemy(-300, 145, 50, 300);
-        var new_enemy_3 = new Enemy(-300, 230, 50, 300);
+        var new_enemy_1 = new Enemy(enemyStart, 60, minSpeed, maxSpeed);
+        var new_enemy_2 = new Enemy(enemyStart, 145, minSpeed, maxSpeed);
+        var new_enemy_3 = new Enemy(enemyStart, 230, minSpeed, maxSpeed);
         allEnemies.push(new_enemy_1, new_enemy_2, new_enemy_3);
     }
 };
 
-//define the number_of_enemies in each line, e.g. number 2 will create 6 enemies (2 enemies in each of 3 lines)
-newEnemyLine(2);
+newEnemyLine(number_of_enemies);
 
 //creates player object of Player class
 var player = new Player();
