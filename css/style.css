@@ -1,3 +1,11 @@
 body {
-    text-align: center;
+	text-align: center;
+}
+
+.points {
+	display: -ms-flexbox;
+    display: -moz-flex;
+    display: -webkit-flex;
+    display: flex;
+    justify-content: center;
 }
