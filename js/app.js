@@ -9,14 +9,14 @@ var LEFT_BORDER = 0;
 
 // Global variables for setting difficulty level - you can adjust ENEMIES by:
 
-// - numberOfenemies in each line, e.g. number 2 will create 6 enemies (2 enemies in each of 3 lines)
+// - setting numberOfenemies in each line, e.g. number 2 will create 6 enemies (2 enemies in each of 3 lines)
 var numberOfenemies = 2;
 
-// - speed of the enemies,
+// - adjusting min and max speed of the enemies,
 var minSpeed = 50;
 var maxSpeed = 300;
 
-// - its starting x coordinate
+// - setting starting x coordinate for enemy
 var enemyStart = -100;
 
 
@@ -25,15 +25,14 @@ var enemyStart = -100;
 // Enemies our player must avoid
 var Enemy = function(x, y, minSpeed, maxSpeed) {
 
-    //Setting the Enemy initial location - it sets random x location out of screen
+    //Setting the Enemy initial location
     this.x = enemyStart;
     this.y = y;
 
-    //Setting the Enemy speed (you need to implement)
+    //Setting the Enemy speed (random speed between min and max speed)
     this.speed = Math.floor((Math.random() * maxSpeed) + minSpeed);
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+    // The image/sprite for our enemies
     this.sprite = 'images/enemy-bug.png';
 };
 
@@ -57,7 +56,7 @@ Enemy.prototype.update = function(dt) {
 
 };
 
-// Draw the enemy on the screen, required method for game
+// Draw the enemy on the screen
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -65,11 +64,9 @@ Enemy.prototype.render = function() {
 
 // ---------------------------------- PLAYER ----------------------------------
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-
+// The Player class
 var Player = function() {
+
     // Setting the Player initial location
     this.reset();
 
@@ -84,13 +81,16 @@ var Player = function() {
 // This function only resets the player in case of enemy-player collision
 Player.prototype.update = function() {
 
-    // Collisions - when collide function returns true then player is reseted
+    // Collisions with enemies - when collide function returns TRUE (the player hits the enemy) then player is reseted and score is decreased by 1 (if it is greater than 0)
     if (this.collide() === true) {
+        if (this.score>0) {
+                this.score--;
+            }
         this.reset();
     }
 };
 
-// Draw the player on the screen, required method for game (THE SAME AS ENEMY)
+// Draw the player on the screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -102,7 +102,7 @@ Player.prototype.reset = function() {
 };
 
 // The handleInput method, which receives user input. In particular:
-// Left key should move the player to the left, right key to the right, up should move the player up and down should move the player down
+// Left key moves the player to the left, right key to the right, up moves the player up and down moves the player down
 // The player cannot move off screen
 // If the player reaches the water, the player is back to the initial location and score is increased by 1 point
 Player.prototype.handleInput = function(pressed_key) {
@@ -126,28 +126,67 @@ Player.prototype.handleInput = function(pressed_key) {
     }
 };
 
-// function defining when collision of player with enemy occurs
+// This function defines when collision of player with enemy occurs
 Player.prototype.collide = function() {
-    //for each enemy instacnce in allEnemies array a condition is made and when is true it returns TRUE
+
+    // For each enemy instacnce in allEnemies array the IF condition is made and when is true it returns TRUE
     for (var i=0; i < allEnemies.length; i++) {
-        // this condition checks whether the player object's coordinates are within enemies x coordinate (+- 50px) and y cooridinate (+- 30px)
-        // if the player hits the enemy then true is returned and the score is decreased by 1 point (if it is greater than 0)
-        if (this.x < allEnemies[i].x + 50 && this.x > allEnemies[i].x - 50 && this.y < allEnemies[i].y + 30 && this.y > allEnemies[i].y - 30) {
-             if (this.score>0) {
-                this.score--;
-            }
+        // This condition checks whether the player object's coordinates are within
+        // enemies x coordinate and y cooridinate (corrected by width and height of bug and enemy within its square picture)
+        if (this.x - 30 < allEnemies[i].x + 45 && this.x + 30 > allEnemies[i].x - 45 && this.y - 25 < allEnemies[i].y + 33 && this.y + 50 > allEnemies[i].y - 33) {
             return true;
         }
     }
 };
 
+// ---------------------------------- GEMS ----------------------------------
+
+var Gem = function() {
+
+    // Set the x and y coordinates of gem
+    this.reset();
+
+    // Set the starting score for gems
+    this.gemScore = 0;
+
+    // Load the image of gem
+    this.sprite = 'images/Gem Orange.png';
+};
+
+// Draw gem on the screen
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+// Reset gem position in case of collisioin with player (if collide() returns true) and adds 1 point to the player score
+Gem.prototype.update = function() {
+    if (this.collide() === true) {
+        player.score++;
+        this.reset();
+    }
+};
+
+// Set the initial random position
+Gem.prototype.reset = function() {
+    this.x = 0 + (Math.floor((Math.random() * 5)) * 101);
+    this.y = 60 + (Math.floor((Math.random() * 3)) * 83);
+};
+
+// Definition of collision with player
+Gem.prototype.collide = function() {
+
+    // Similiar to the mechanism of player-enemy collison
+    if (player.x - 30 < this.x + 50 && player.x + 30 > this.x - 50 && player.y - 25 < this.y + 33 && player.y + 50 > this.y - 33) {
+        return true;
+    }
+};
 
 // ---------------------------------- INSTANCES ----------------------------------
 
 // Creates enemies objects and place all enemy objects in an array called allEnemies
 var allEnemies = [];
 
-// function NewEnemyLine creates few (numberOfenemies) new instances of Enemy class with coordinates and randomly generated speed for all 3 lines
+// function NewEnemyLine creates few (numberOfenemies) instances of Enemy class with coordinates and randomly generated speed for all 3 lines of stoned floor on canvas
 var newEnemyLine = function(numberOfenemies) {
     for (var i=0; i<numberOfenemies; i++) {
         var new_enemy_1 = new Enemy(enemyStart, 60, minSpeed, maxSpeed);
@@ -160,8 +199,11 @@ var newEnemyLine = function(numberOfenemies) {
 // The creadted enemies are placed in allEnemies array
 newEnemyLine(numberOfenemies);
 
-// Creates player instance of Player class
+// Creates Player instance
 var player = new Player();
+
+// Creates Gem instance
+var newGem = new Gem();
 
 
 // ---------------------------------- KEY LISTENER ----------------------------------
