@@ -55,7 +55,7 @@ Enemy.prototype.update = function(dt) {
     // to have the score up to date in the HTML, this function assigns the score id (score in html) to the current score of the player
     document.getElementById('score').innerHTML = player.score;
 
-    // no need to handle collisions with player - enemies are running, overlaping and have different speed
+    // No need to handle collisions with player - enemies are running, overlaping and have different speed
     // (the speed changes even when the enemy crosses the right border and is reseted)
 };
 
@@ -144,6 +144,7 @@ Player.prototype.collide = function() {
 
 // ---------------------------------- GEMS ----------------------------------
 
+// Definition of gem (position, score and image)
 var Gem = function() {
 
     // Set the x and y coordinates of gem
