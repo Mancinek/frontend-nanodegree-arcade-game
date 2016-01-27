@@ -1,36 +1,40 @@
-// ---------------------------------- GLOBAL SETTINGS ----------------------------------
+// ---------------------------------- GANE SETTINGS ----------------------------------
 
-// Defines global helper constants for borders of game canvas
+// This is responsible for defining borders and game difficulty
+// This class could be useful in future for creating several diffulty levels (instances of Settings)
+var Settings = function() {
 
-var UPPER_BORDER = 60;
-var LOWER_BORDER = 400;
-var RIGHT_BORDER = 400;
-var LEFT_BORDER = 0;
+// Defines  helper variables for borders of game canvas
+this.UPPER_BORDER = 60;
+this.LOWER_BORDER = 400;
+this.RIGHT_BORDER = 400;
+this.LEFT_BORDER = 0;
 
-// Global variables for setting difficulty level - you can adjust ENEMIES by:
+// Setting of difficulty level - you can adjust ENEMIES by:
 
 // - setting numberOfenemies in each line, e.g. number 2 will create 6 enemies (2 enemies in each of 3 lines)
-var numberOfenemies = 2;
+this.numberOfenemies = 2;
 
 // - adjusting min and max speed of the enemies,
-var minSpeed = 50;
-var maxSpeed = 300;
+this.minSpeed = 50;
+this.maxSpeed = 300;
 
 // - setting starting x coordinate for enemy
-var enemyStart = -100;
+this.enemyStart = -100;
 
+};
 
 // ---------------------------------- ENEMIES ----------------------------------
 
 // Enemies our player must avoid
-var Enemy = function(x, y, minSpeed, maxSpeed) {
+var Enemy = function(y) {
 
     //Setting the Enemy initial location
-    this.x = enemyStart;
+    this.x = setting.enemyStart;
     this.y = y;
 
     //Setting the Enemy speed (random speed between min and max speed)
-    this.speed = Math.floor((Math.random() * maxSpeed) + minSpeed);
+    this.speed = Math.floor((Math.random() * setting.maxSpeed) + setting.minSpeed);
 
     // The image/sprite for our enemies
     this.sprite = 'images/enemy-bug.png';
@@ -43,9 +47,9 @@ Enemy.prototype.update = function(dt) {
     this.x = this.x + this.speed * dt;
 
     //Going out of screen (right side) - reset the position of enemy to -100 px and sets new speed of enemy between 50 and 300
-    if (this.x>=RIGHT_BORDER+200) {
-        this.x = enemyStart;
-        this.speed =  Math.floor((Math.random() * maxSpeed) + minSpeed);
+    if (this.x>=setting.RIGHT_BORDER+200) {
+        this.x = setting.enemyStart;
+        this.speed =  Math.floor((Math.random() * setting.maxSpeed) + setting.minSpeed);
     }
 
     // to have the score up to date in the HTML, this function assigns the score id (score in html) to the current score of the player
@@ -53,7 +57,6 @@ Enemy.prototype.update = function(dt) {
 
     // no need to handle collisions with player - enemies are running, overlaping and have different speed
     // (the speed changes even when the enemy crosses the right border and is reseted)
-
 };
 
 // Draw the enemy on the screen
@@ -106,22 +109,22 @@ Player.prototype.reset = function() {
 // The player cannot move off screen
 // If the player reaches the water, the player is back to the initial location and score is increased by 1 point
 Player.prototype.handleInput = function(pressed_key) {
-        if (pressed_key === 'up' && this.y>UPPER_BORDER) {
+        if (pressed_key === 'up' && this.y>setting.UPPER_BORDER) {
             this.y -= 85;
-    }   else if (pressed_key === 'up' && this.y<=UPPER_BORDER) {
+    }   else if (pressed_key === 'up' && this.y<=setting.UPPER_BORDER) {
             this.score++;
             this.reset();
         }
 
-        if (pressed_key === 'down' && this.y<LOWER_BORDER) {
+        if (pressed_key === 'down' && this.y<setting.LOWER_BORDER) {
             this.y += 85;
     }
 
-       if (pressed_key === 'left' && this.x>LEFT_BORDER) {
+       if (pressed_key === 'left' && this.x>setting.LEFT_BORDER) {
             this.x -= 100;
     }
 
-       if (pressed_key === 'right' && this.x<RIGHT_BORDER) {
+       if (pressed_key === 'right' && this.x<setting.RIGHT_BORDER) {
             this.x += 100;
     }
 };
@@ -183,21 +186,25 @@ Gem.prototype.collide = function() {
 
 // ---------------------------------- INSTANCES ----------------------------------
 
-// Creates enemies objects and place all enemy objects in an array called allEnemies
+// Creates instance of Settings
+var setting = new Settings();
+
+// Creates enemies array
 var allEnemies = [];
 
-// function NewEnemyLine creates few (numberOfenemies) instances of Enemy class with coordinates and randomly generated speed for all 3 lines of stoned floor on canvas
-var newEnemyLine = function(numberOfenemies) {
-    for (var i=0; i<numberOfenemies; i++) {
-        var new_enemy_1 = new Enemy(enemyStart, 60, minSpeed, maxSpeed);
-        var new_enemy_2 = new Enemy(enemyStart, 145, minSpeed, maxSpeed);
-        var new_enemy_3 = new Enemy(enemyStart, 230, minSpeed, maxSpeed);
+// Function NewEnemyLine creates few (numberOfenemies) instances of Enemy class with coordinates and randomly generated speed for all 3 lines of stoned floor on canvas
+// it places also all enemy objects in an array called allEnemies
+var newEnemyLine = function(num) {
+    for (var i=0; i<num; i++) {
+        var new_enemy_1 = new Enemy(60);
+        var new_enemy_2 = new Enemy(145);
+        var new_enemy_3 = new Enemy(230);
         allEnemies.push(new_enemy_1, new_enemy_2, new_enemy_3);
     }
 };
 
-// The creadted enemies are placed in allEnemies array
-newEnemyLine(numberOfenemies);
+// Call function newEnemyLine that creates and places enemies in allEnemies array
+newEnemyLine(setting.numberOfenemies);
 
 // Creates Player instance
 var player = new Player();

@@ -4,8 +4,8 @@ body {
 
 .points {
 	display: -ms-flexbox;
-    display: -moz-flex;
-    display: -webkit-flex;
-    display: flex;
-    justify-content: center;
+	display: -moz-flex;
+	display: -webkit-flex;
+	display: flex;
+	justify-content: center;
 }
