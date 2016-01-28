@@ -37,7 +37,7 @@ The game runs on basis of three _js_ files:
 
 * `engine.js` draws the canvas on the screen and provides the game loop functionality by calling update and render methods on player and enemies instances (defined in app.js)
 * `resources.js` is an image loading utility and caching layer
-* `app.js` implements the _Player_, the _Enemy_ and _Gem_ classes
+* `app.js` implements _Player_, _Enemy_ and _Gem_ classes. It creates also _Settings_ class to adjust game difficulty.
 
 The repository contains also other helper files like:
 
