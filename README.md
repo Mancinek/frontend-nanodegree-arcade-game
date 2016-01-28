@@ -1,7 +1,7 @@
 #Arcade Game - Frogger
 
 This is a recreation of classic arcade game **Frogger**. It is simplified version with easy rules. At this stage,
-this game has no end, you can collect points endlessly. This repository gives you basics to further development of game.
+this game has no end, you can collect points endlessly. This repository gives you basis to further development of game.
 
 ##Contents
 
@@ -17,7 +17,7 @@ To run this game [download](https://github.com/Mancinek/frontend-nanodegree-arca
 
 ##How to play
 
-You are the character of _the boy_ at the bottom of the board. Your goal is to reach the water without collision with _enemy bugs_.
+You are the character of _the boy_ at the bottom of the board. Your goal is to reach the _water_ without collision with _enemy bugs_.
 
 ### How to move the player
 
@@ -25,7 +25,7 @@ Use _arrows_ of your keyboard to move the character in desired direction.
 
 ### Rules
 
-You have to collect as much points as possible. When you reach _the water_ at the top of the board you will get 1 point. In case of collision with _enemy bug_ you will lose 1 point and will be reseted to the starting position. To get more points you can collect _gems_ - each _gem_ gives you 1 additional point.
+You have to collect as much points as possible. When you reach _the water_ at the top of the board you will get 1 point and your score will be updated. In case of collision with _enemy bug_ you will lose 1 point and will be reseted to the starting position. To get more points you can collect _gems_ - each _gem_ gives you 1 additional point.
 
 ##Issues
 
@@ -41,7 +41,7 @@ The game runs on basis of three _js_ files:
 
 The repository contains also other helper files like:
 
-* images like characters, water, grass, stones,
+* images of characters, water, grass, stones,
 * `index.html` that loads the scripts on the page,
 * `style.css` that defines the style of html (centers the canvas and score).
 
